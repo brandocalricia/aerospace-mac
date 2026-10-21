@@ -1,0 +1,148 @@
+# AeroSpace on this Mac. Tested with AeroSpace 0.20.3-Beta.
+# config-version 2 is the newest generation this installed app understands.
+# After an AeroSpace update, run: aerospace reload-config
+# A warning that a newer config-version exists means the file still loaded.
+# Read the guide before changing the number:
+# https://nikitabobko.github.io/AeroSpace/guide#config-version
+# One unknown key makes AeroSpace reject the whole file and keep the previous good file.
+# This app does not know auto-reload-config or focus-follows-mouse. Leave them out.
+
+config-version = 2
+
+after-login-command = []
+after-startup-command = [
+  'exec-and-forget $HOME/dotfiles/scripts/aerospace-borders.sh',
+]
+start-at-login = true
+
+# Written down on purpose so a later default flip does not change the feel.
+# These match the defaults shipped with AeroSpace 0.20.3-Beta.
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+accordion-padding = 12
+automatically-unhide-macos-hidden-apps = false
+
+# Does nothing on this one-screen laptop. Moves the pointer when a second screen is focused.
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# Generation 2 does not invent this list from keybinds. Rooms 1–9 stay. Room 10 matches Hyprland.
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+
+# Root-level callbacks. These headers must not sit under [gaps] or
+# [mode.main.binding], or AeroSpace refuses to load the file.
+# Dropbox's menu-bar tray is an AX window. Tiling it splits the workspace,
+# then the split jumps again when the tray closes.
+[[on-window-detected]]
+if.app-id = 'com.getdropbox.dropbox'
+run = 'layout floating'
+
+# Finder and iWork emit untitled helper windows. The script floats a new
+# window only if it is still untitled after a short wait, so a real document
+# stays tiled.
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'exec-and-forget $HOME/dotfiles/scripts/aerospace-float-untitled.sh'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Pages'
+run = 'exec-and-forget $HOME/dotfiles/scripts/aerospace-float-untitled.sh'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Numbers'
+run = 'exec-and-forget $HOME/dotfiles/scripts/aerospace-float-untitled.sh'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Keynote'
+run = 'exec-and-forget $HOME/dotfiles/scripts/aerospace-float-untitled.sh'
+
+# New windows only. Windows already open stay put.
+# No --focus-follows-window: focus stays where it is, same as Hyprland's silent rule.
+# if.app-id stays, because this app has no `test` command and this shape already loads.
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace 9'
+
+[[on-window-detected]]
+if.app-id = 'com.valvesoftware.steam'
+run = 'move-node-to-workspace 10'
+
+[gaps]
+inner.horizontal = 3
+inner.vertical = 3
+outer.left = 6
+outer.right = 6
+outer.top = 6
+outer.bottom = 6
+
+[mode.main.binding]
+alt-left        = 'focus left'
+alt-right       = 'focus right'
+alt-up          = 'focus up'
+alt-down        = 'focus down'
+alt-shift-left  = 'move left'
+alt-shift-right = 'move right'
+alt-shift-up    = 'move up'
+alt-shift-down  = 'move down'
+alt-q           = 'close'
+# --no-outer-gaps lets a full window reach the screen edge, like Hyprland fullscreen.
+alt-f           = 'fullscreen --no-outer-gaps'
+alt-v           = 'layout floating tiling'
+alt-j           = 'layout tiles horizontal vertical'
+alt-shift-r     = 'reload-config'
+# Option+Enter opens Ghostty on this workspace. Terminal.app stays installed.
+alt-enter       = 'exec-and-forget $HOME/dotfiles/scripts/mac-new-terminal.sh'
+alt-a           = 'exec-and-forget /usr/bin/open -a "Nimble Commander"'
+alt-b           = 'exec-and-forget /usr/bin/open -a "Brave Browser"'
+alt-minus       = 'resize smart -50'
+alt-equal       = 'resize smart +50'
+alt-comma       = 'layout accordion horizontal vertical'
+alt-tab         = 'workspace-back-and-forth'
+alt-0           = 'workspace 10'
+alt-shift-semicolon = 'mode service'
+alt-1           = 'workspace 1'
+alt-2           = 'workspace 2'
+alt-3           = 'workspace 3'
+alt-4           = 'workspace 4'
+alt-5           = 'workspace 5'
+alt-6           = 'workspace 6'
+alt-7           = 'workspace 7'
+alt-8           = 'workspace 8'
+alt-9           = 'workspace 9'
+# Follow the window (Hyprland movetoworkspace, not movetoworkspacesilent).
+alt-shift-0     = 'move-node-to-workspace --focus-follows-window 10'
+alt-shift-1     = 'move-node-to-workspace --focus-follows-window 1'
+alt-shift-2     = 'move-node-to-workspace --focus-follows-window 2'
+alt-shift-3     = 'move-node-to-workspace --focus-follows-window 3'
+alt-shift-4     = 'move-node-to-workspace --focus-follows-window 4'
+alt-shift-5     = 'move-node-to-workspace --focus-follows-window 5'
+alt-shift-6     = 'move-node-to-workspace --focus-follows-window 6'
+alt-shift-7     = 'move-node-to-workspace --focus-follows-window 7'
+alt-shift-8     = 'move-node-to-workspace --focus-follows-window 8'
+alt-shift-9     = 'move-node-to-workspace --focus-follows-window 9'
+
+# Short "fix the layout" moment. Escape leaves it. Option+B is Brave again after that.
+# This mode does not reload config and does not close other windows.
+[mode.service.binding]
+esc = 'mode main'
+r = ['flatten-workspace-tree', 'mode main']
+b = ['balance-sizes', 'mode main']
+left = 'resize width -50'
+right = 'resize width +50'
+up = 'resize height +50'
+down = 'resize height -50'
+minus = 'resize smart -50'
+equal = 'resize smart +50'
+shift-left = ['join-with left', 'mode main']
+shift-right = ['join-with right', 'mode main']
+shift-up = ['join-with up', 'mode main']
+shift-down = ['join-with down', 'mode main']
